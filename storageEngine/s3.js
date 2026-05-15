@@ -21,12 +21,7 @@ let e = {};
 e.uploadFile = async (data) => {
     try {
         logger.debug(`Uploading file to S3 Bucket : ${data.file.metadata.fileName}`);
-        logger.debug(JSON.stringify({
-            accessKeyId: data.accessKeyId,
-            secretAccessKey: data.secretAccessKey,
-            region: data.region,
-            bucket: data.bucket
-        }));
+        logger.debug(JSON.stringify({ region: data.region, bucket: data.bucket }));
 
         AWS.config.update({
             accessKeyId: data.accessKeyId,
@@ -66,12 +61,7 @@ e.uploadFile = async (data) => {
 e.downloadFileBuffer = async (data) => {
     try {
         logger.debug(`Downloading File from S3 :: ${data.fileName}`);
-        logger.trace(JSON.stringify({
-            accessKeyId: data.accessKeyId,
-            secretAccessKey: data.secretAccessKey,
-            region: data.region,
-            bucket: data.bucket
-        }));
+        logger.trace(JSON.stringify({ region: data.region, bucket: data.bucket }));
 
         AWS.config.update({
             accessKeyId: data.accessKeyId,
@@ -113,12 +103,7 @@ e.downloadFileBuffer = async (data) => {
 e.deleteFile = async (data) => {
     try {
         logger.debug(`Deleting File from S3 :: ${data.fileName}`);
-        logger.trace(JSON.stringify({
-            accessKeyId: data.accessKeyId,
-            secretAccessKey: data.secretAccessKey,
-            region: data.region,
-            bucket: data.bucket
-        }));
+        logger.trace(JSON.stringify({ region: data.region, bucket: data.bucket }));
 
         AWS.config.update({
             accessKeyId: data.accessKeyId,

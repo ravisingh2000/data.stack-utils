@@ -18,18 +18,22 @@ if (!logger) {
 
 const URL = "https://kubernetes.default.svc";
 
-var dataStack_token = "";
+var dataStack_token = process.env.K8S_API_TOKEN || "";
 let dataStack_sa_path = "/var/run/secrets/kubernetes.io/serviceaccount/token";
 if (fs.existsSync(dataStack_sa_path)) dataStack_token = fs.readFileSync(dataStack_sa_path);
+
+const k8sCaPath = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt";
+const k8sCaExists = fs.existsSync(k8sCaPath);
+const rejectUnauthorized = (process.env.K8S_API_REJECT_UNAUTHORIZED || '').toLowerCase() !== 'false';
+const agentOptions = k8sCaExists
+	? { ca: fs.readFileSync(k8sCaPath), rejectUnauthorized }
+	: { rejectUnauthorized: false };
+
+const agent = new https.Agent(agentOptions);
 
 const headers = {
 	"Authorization": "Bearer " + dataStack_token
 };
-
-
-const agent = new https.Agent({
-	rejectUnauthorized: false,
-});
 
 
 var e = {};

@@ -17,14 +17,20 @@ let loggerName = process.env.HOSTNAME ? `[${process.env.DATA_STACK_NAMESPACE}] [
 let logger = log4js.getLogger(loggerName);
 
 let init = (config) => {
-    logger.debug(`Redis init config (BullMQ): ${JSON.stringify(config)}`);
+    const redisConfig = {
+        host: config.host || config.redisHost || '127.0.0.1',
+        port: config.port || config.redisPort || 6379,
+        connectTimeout: config.connectTimeout || 15000,
+        maxRetriesPerRequest: config.maxRetriesPerRequest !== undefined ? config.maxRetriesPerRequest : null,
+        enableReadyCheck: config.enableReadyCheck !== undefined ? config.enableReadyCheck : true,
+    };
+    if (config.password) redisConfig.password = config.password;
+    if (config.username) redisConfig.username = config.username;
+    if (config.tls) redisConfig.tls = config.tls;
 
-    connection = new IORedis({
-        host: config.redisHost,
-        port: config.redisPort,
-        connectTimeout: config.connectTimeout,
-        maxRetriesPerRequest: null
-    });
+    logger.debug(`Redis init config (BullMQ): ${JSON.stringify({ ...redisConfig, password: redisConfig.password ? '[REDACTED]' : undefined })}`);
+
+    connection = new IORedis(redisConfig);
     connection.on('error', function (err) {
         logger.error('Redis error (BullMQ)', err)
     });
